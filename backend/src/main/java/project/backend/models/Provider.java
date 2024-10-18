@@ -1,6 +1,13 @@
 package project.backend.models;
 
-import jakarta.persistence.*;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Provider {
@@ -8,45 +15,24 @@ public class Provider {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne
-    private User user;
+    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true) // Обратите внимание на "provider"
+    private List<SubServiceCategory> subServiceCategories;
 
-    @ManyToOne
-    @JoinColumn(name = "sub_service_category_id", nullable = false)
-    private SubServiceCategory subServiceCategory;
-
-    @Column(length = 250)
-    private String aboutMe;
+    // Другие поля и методы...
 
     public long getId() {
         return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public SubServiceCategory getSubServiceCategory() {
-        return subServiceCategory;
-    }
-
-    public String getAboutMe() {
-        return aboutMe;
     }
 
     public void setId(long id) {
         this.id = id;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public List<SubServiceCategory> getSubServiceCategories() {
+        return subServiceCategories;
     }
 
-    public void setSubServiceCategory(SubServiceCategory subServiceCategory) {
-        this.subServiceCategory = subServiceCategory;
-    }
-
-    public void setAboutMe(String aboutMe) {
-        this.aboutMe = aboutMe;
+    public void setSubServiceCategories(List<SubServiceCategory> subServiceCategories) {
+        this.subServiceCategories = subServiceCategories;
     }
 }

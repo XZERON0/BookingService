@@ -20,7 +20,9 @@ public class SubServiceCategory {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private ServiceCategory category;
-
+    @ManyToOne
+    @JoinColumn(name = "provider_id") 
+    private Provider provider;
     @Column(nullable = false)
     private int servicePrice;
 
@@ -39,7 +41,7 @@ public class SubServiceCategory {
     public int getServicePrice() {
         return servicePrice;
     }
-
+    public Provider getProvider(){return this.provider;}
     public void setId(long id) {
         this.id = id;
     }
@@ -55,4 +57,5 @@ public class SubServiceCategory {
     public void setServicePrice(int servicePrice) {
         this.servicePrice = servicePrice;
     }
+    public void setProvider(Provider provider){this.provider = provider;}
 }

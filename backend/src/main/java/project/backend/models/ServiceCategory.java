@@ -19,10 +19,13 @@ public class ServiceCategory {
     @Column(nullable = false)
     private String type;
 
-    // Один ко многим: одна категория может иметь множество подкатегорий
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubServiceCategory> subCategories;
 
+    @OneToMany
+    private List<ServiceTitle> titles;
+
+    // геттеры и сеттеры
     public long getId() {
         return id;
     }
@@ -33,6 +36,10 @@ public class ServiceCategory {
 
     public List<SubServiceCategory> getSubCategories() {
         return subCategories;
+    }
+
+    public List<ServiceTitle> getTitles() {
+        return titles;
     }
 
     public void setId(long id) {
@@ -46,4 +53,9 @@ public class ServiceCategory {
     public void setSubCategories(List<SubServiceCategory> subCategories) {
         this.subCategories = subCategories;
     }
+
+    public void setTitles(List<ServiceTitle> titles) {
+        this.titles = titles;
+    }
 }
+

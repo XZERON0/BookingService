@@ -13,7 +13,6 @@ public class ServiceTitle {
     private long id;
     @Column(nullable=false)
     private String title;
-
     // getters/setters
     public long getId(){return this.id;}
     public String getTitle(){return this.title;}
