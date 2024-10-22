@@ -24,13 +24,13 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = true)
     private String avatar; 
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private boolean isOnline; // Статус пользователя (онлайн/офлайн)
 
-    @Column
+    @Column(nullable=true)
     private LocalDateTime lastOnline; // Время последнего визита
 
     @Column(nullable = false, updatable = false)

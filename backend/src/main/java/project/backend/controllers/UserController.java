@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import project.backend.models.User;
@@ -16,7 +15,6 @@ import project.backend.repository.UserRep;
 import project.backend.service.UserService;
 
 @RestController
-@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
@@ -27,7 +25,6 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
-        // Проверка, существует ли пользователь с таким email
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
             return ResponseEntity.badRequest().body("Пользователь с таким email уже существует");

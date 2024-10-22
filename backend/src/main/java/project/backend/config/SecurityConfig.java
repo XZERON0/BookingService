@@ -20,8 +20,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests((authz) -> authz
-                .requestMatchers("/catalog", "/services").permitAll() // Открытые маршруты
-                .anyRequest().authenticated() // Все остальные требуют аутентификации
+                .requestMatchers("/catalog", "/services", "/register").permitAll()
+                .anyRequest().authenticated() 
             )
             .formLogin((form) -> form
                 .loginPage("/login")
