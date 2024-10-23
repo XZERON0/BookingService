@@ -35,8 +35,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody User loginRequest) {
-        // Предположим, что loginRequest имеет ID и пароль
-        Optional<User> user = userRepository.findById(loginRequest.getId());
+        // Optional<User> user = userRepository.findById(loginRequest.getId());
+        Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
         if (user.isPresent()) {
             boolean isPasswordMatch = userService.checkPassword(loginRequest.getPassword(), user.get().getPassword());
             if (isPasswordMatch) {
