@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import project.backend.models.User;
-import project.backend.repository.UserRep;
+import project.backend.repository.UserReposity;
 import project.backend.service.UserService;
 
 @RestController
@@ -21,7 +21,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private UserRep userRepository;
+    private UserReposity userRepository;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
@@ -35,7 +35,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody User loginRequest) {
-        Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
+        // Предположим, что loginRequest имеет ID и пароль
+        Optional<User> user = userRepository.findById(loginRequest.getId());
         if (user.isPresent()) {
             boolean isPasswordMatch = userService.checkPassword(loginRequest.getPassword(), user.get().getPassword());
             if (isPasswordMatch) {
@@ -48,9 +49,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        Optional<User> user = userRepository.findByEmail(email);
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return ResponseEntity.ok(user.get());
         } else {

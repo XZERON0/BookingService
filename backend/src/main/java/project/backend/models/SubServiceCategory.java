@@ -38,6 +38,8 @@ public class SubServiceCategory {
         return category;
     }
 
+
+    
     public int getServicePrice() {
         return servicePrice;
     }
