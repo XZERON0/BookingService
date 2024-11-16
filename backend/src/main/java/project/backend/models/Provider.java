@@ -15,8 +15,8 @@ public class Provider {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true) // Обратите внимание на "provider"
-    private List<SubServiceCategory> subServiceCategories;
+    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
+    private List<ProviderService> providerServices;
 
     // Другие поля и методы...
 
@@ -28,11 +28,11 @@ public class Provider {
         this.id = id;
     }
 
-    public List<SubServiceCategory> getSubServiceCategories() {
-        return subServiceCategories;
+    public List<ProviderService> setProviderServices() {
+        return providerServices;
     }
 
-    public void setSubServiceCategories(List<SubServiceCategory> subServiceCategories) {
-        this.subServiceCategories = subServiceCategories;
+    public void setProviderServices(List<ProviderService> providerServices) {
+        this.providerServices = providerServices;
     }
 }

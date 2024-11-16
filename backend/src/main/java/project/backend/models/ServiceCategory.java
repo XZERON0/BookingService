@@ -22,9 +22,6 @@ public class ServiceCategory {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubServiceCategory> subCategories;
 
-    @OneToMany
-    private List<ServiceTitle> titles;
-
     // геттеры и сеттеры
     public long getId() {
         return id;
@@ -38,9 +35,6 @@ public class ServiceCategory {
         return subCategories;
     }
 
-    public List<ServiceTitle> getTitles() {
-        return titles;
-    }
 
     public void setId(long id) {
         this.id = id;
@@ -54,8 +48,5 @@ public class ServiceCategory {
         this.subCategories = subCategories;
     }
 
-    public void setTitles(List<ServiceTitle> titles) {
-        this.titles = titles;
-    }
 }
 

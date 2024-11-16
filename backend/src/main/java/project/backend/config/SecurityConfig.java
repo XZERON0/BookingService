@@ -20,14 +20,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Уберите csrf, если он вам не нужен
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register").permitAll()
+            .csrf(csrf -> csrf.disable()) 
+                .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/login", "/register", "/user/**").permitAll()
                 .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/get")
-                .permitAll()
             )
             .logout(logout -> logout
                 .permitAll()

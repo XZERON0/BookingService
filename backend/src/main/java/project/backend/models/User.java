@@ -24,10 +24,11 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private String name;
-
+    private String name; 
+    @Column(nullable=true)
+    private String physicalAddress;
     @Column(nullable = true)
-    private String avatar; 
+    private String avatar;  // Аватар user
 
     @Column(nullable = true)
     private boolean isOnline; // Статус пользователя (онлайн/офлайн)
@@ -49,6 +50,10 @@ public class User {
         return id;
     }
 
+    public String getPhysicalAddress()
+    {
+        return physicalAddress;
+    }
     public String getEmail() {
         return email;
     }
@@ -78,6 +83,10 @@ public class User {
     }
 
     // сеттеры для изменения данных
+    public void setPhysicalAddress(String physicalAddress)
+    {
+        this.physicalAddress = physicalAddress;
+    }
     public void setId(long id) {
         this.id = id;
     }
