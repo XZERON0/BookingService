@@ -22,7 +22,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) 
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register", "/user/**").permitAll()
+                .requestMatchers("/service/**", "/user/**").permitAll()
                 .anyRequest().authenticated()
             )
             .logout(logout -> logout

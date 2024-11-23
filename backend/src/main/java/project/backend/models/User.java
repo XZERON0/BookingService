@@ -2,13 +2,19 @@ package project.backend.models;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+
+
 
 @Entity
 @Table(name="users")
@@ -19,7 +25,7 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String email;
-
+    
     @Column(nullable = false)
     private String password;
 
@@ -29,27 +35,50 @@ public class User {
     private String physicalAddress;
     @Column(nullable = true)
     private String avatar;  // Аватар user
-
+    
     @Column(nullable = true)
     private boolean isOnline; // Статус пользователя (онлайн/офлайн)
 
+    public enum UserRole
+    {
+        USER, ADMIN, MODERATOR;
+    }
     @Column(nullable=true)
     private LocalDateTime lastOnline; // Время последнего визита
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt; // Дата создания
 
+    @OneToOne(mappedBy="user", cascade=CascadeType.ALL)
+    private Provider provider;
+
+    @Column(nullable=false)
+    @Enumerated(EnumType.STRING)
+    private UserRole role = UserRole.USER;
+
     // Конструктор для автоматической установки createdAt
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
 
     // геттеры и сеттеры
+    public UserRole getRole()
+    {
+        return this.role;
+    }
+    public void setRole(UserRole role)
+    {
+        this.role = role;
+    }
     public long getId() {
         return id;
     }
-
+    public Provider getProvider()
+    {
+        return provider;
+    }
     public String getPhysicalAddress()
     {
         return physicalAddress;
@@ -83,6 +112,11 @@ public class User {
     }
 
     // сеттеры для изменения данных
+
+    public void setProvider(Provider provider)
+    {
+        this.provider = provider;
+    }
     public void setPhysicalAddress(String physicalAddress)
     {
         this.physicalAddress = physicalAddress;
