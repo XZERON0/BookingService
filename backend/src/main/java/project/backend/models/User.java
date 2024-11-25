@@ -73,42 +73,42 @@ public class User {
         this.role = role;
     }
     public long getId() {
-        return id;
+        return this.id;
     }
     public Provider getProvider()
     {
-        return provider;
+        return this.provider;
     }
     public String getPhysicalAddress()
     {
-        return physicalAddress;
+        return this.physicalAddress;
     }
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getAvatar() {
-        return avatar;
+        return this.avatar;
     }
 
     public boolean isOnline() {
-        return isOnline;
+        return this.isOnline;
     }
 
     public LocalDateTime getLastOnline() {
-        return lastOnline;
+        return this.lastOnline;
     }
 
     public LocalDateTime getCreatedAt() {
-        return createdAt;
+        return this.createdAt;
     }
 
     // сеттеры для изменения данных

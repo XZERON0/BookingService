@@ -28,6 +28,11 @@ public class SubServiceCategory {
     @OneToMany(mappedBy = "subServiceCategory", cascade = CascadeType.ALL)
     private List<ProviderService> providerServices;
 
+    public SubServiceCategory(String title)
+    {
+        this.title = title;
+    }
+
     public long getId() {
         return id;
     }
