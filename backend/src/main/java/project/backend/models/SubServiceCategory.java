@@ -1,8 +1,5 @@
 package project.backend.models;
 
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,14 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 @Entity
+@Table(name="SubServiceCategory")
 public class SubServiceCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique=true)
     private String title;
 
     @ManyToOne
@@ -25,12 +23,11 @@ public class SubServiceCategory {
     private ServiceCategory category;
 
     // Поле для связи с поставщиком через промежуточную таблицу
-    @OneToMany(mappedBy = "subServiceCategory", cascade = CascadeType.ALL)
-    private List<ProviderService> providerServices;
+    // @OneToMany(mappedBy = "subServiceCategory", cascade = CascadeType.ALL)
+    // private List<ProviderService> providerServices;
 
-    public SubServiceCategory(String title)
+    public SubServiceCategory()
     {
-        this.title = title;
     }
 
     public long getId() {
@@ -45,9 +42,9 @@ public class SubServiceCategory {
         return category;
     }
     
-    public List<ProviderService> geProviderServices() {
-        return providerServices;
-    }
+    // public List<ProviderService> geProviderServices() {
+    //     return providerServices;
+    // }
     public void setId(long id) {
         this.id = id;
     }
@@ -59,7 +56,7 @@ public class SubServiceCategory {
         this.category = category;
     }
 
-    public void setProviderServices(List<ProviderService> providerServices) {
-        this.providerServices = providerServices;
-    }
+    // public void setProviderServices(List<ProviderService> providerServices) {
+    //     this.providerServices = providerServices;
+    // }
 }

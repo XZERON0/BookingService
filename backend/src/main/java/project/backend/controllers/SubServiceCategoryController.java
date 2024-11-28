@@ -21,6 +21,7 @@ public class SubServiceCategoryController {
 
     @Autowired
     private SubServiceCategoryRepository rep;
+    @Transactional
     @PostMapping
     public ResponseEntity<String> createSubServiceCategory(@RequestBody SubServiceCategory request) {
         rep.save(request);
