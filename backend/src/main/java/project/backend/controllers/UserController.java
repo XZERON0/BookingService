@@ -11,9 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +32,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserReposity userRepository;
@@ -53,6 +59,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
+
     public ResponseEntity<String> registerUser(@RequestBody User user) {
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
@@ -97,5 +104,28 @@ public class UserController {
         Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return userService.getAllUser(pageable);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User user) {
+    Optional<User> existingUser = userRepository.findById(id);
+    if (existingUser.isPresent()) {
+        existingUser.get().setEmail(user.getEmail());
+        existingUser.get().setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(existingUser.get());
+        return ResponseEntity.ok("Пользователь успешно обновлен");
+    } else {
+        return ResponseEntity.badRequest().body("Пользователь не найден");
+    }
+}
+    @DeleteMapping
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        Optional<User> existingUser = userRepository.findById(id);
+        if (existingUser.isPresent()) {
+            userRepository.delete(existingUser.get());
+            return ResponseEntity.ok("Пользователь успешно удален");
+        } else {
+            return ResponseEntity.badRequest().body("Пользователь не найден");
+        }
     }
 }
