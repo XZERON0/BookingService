@@ -45,7 +45,7 @@ public class UserController {
                 return "Текущий пользователь: "+ ((UserDetails) principal).getUsername();
             else
             {
-                return  "Текущий пользователь (не стандартный): " + principal.toString();
+                return  "Текущий пользователь (не стандартный): " + principal;
             }
 
         } 

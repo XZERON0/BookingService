@@ -13,9 +13,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
-
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name="users")
 public class User {
@@ -61,91 +64,5 @@ public class User {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-    }
-
-    // геттеры и сеттеры
-    public UserRole getRole()
-    {
-        return this.role;
-    }
-    public void setRole(UserRole role)
-    {
-        this.role = role;
-    }
-    public long getId() {
-        return this.id;
-    }
-    public Provider getProvider()
-    {
-        return this.provider;
-    }
-    public String getPhysicalAddress()
-    {
-        return this.physicalAddress;
-    }
-    public String getEmail() {
-        return this.email;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getAvatar() {
-        return this.avatar;
-    }
-
-    public boolean isOnline() {
-        return this.isOnline;
-    }
-
-    public LocalDateTime getLastOnline() {
-        return this.lastOnline;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return this.createdAt;
-    }
-
-    // сеттеры для изменения данных
-
-    public void setProvider(Provider provider)
-    {
-        this.provider = provider;
-    }
-    public void setPhysicalAddress(String physicalAddress)
-    {
-        this.physicalAddress = physicalAddress;
-    }
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public void setOnline(boolean online) {
-        isOnline = online;
-    }
-
-    public void setLastOnline(LocalDateTime lastOnline) {
-        this.lastOnline = lastOnline;
     }
 }

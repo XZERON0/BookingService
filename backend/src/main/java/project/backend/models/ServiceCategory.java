@@ -6,7 +6,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
+import lombok.Data;
+import lombok.NoArgsConstructor;
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name="ServiceCategory")
 public class ServiceCategory {
@@ -16,14 +19,5 @@ public class ServiceCategory {
 
     @Column(nullable = false, unique=true)
     private String type;
-
-    // геттеры и сеттеры
-    public long getId() {return this.id;}
-
-    public String getType() {return this.type;}
-
-    public void setId(long id) {this.id = id;}
-
-    public void setType(String type) {this.type = type;}
 }
 

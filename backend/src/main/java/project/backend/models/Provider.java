@@ -13,7 +13,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @Entity
 public class Provider {
     @Id
@@ -35,37 +39,5 @@ public class Provider {
     @Column(nullable=false)
     @Enumerated(EnumType.STRING)
     private ProviderSub subscription = ProviderSub.basic;
-    // Другие поля и методы...
 
-    public ProviderSub getSubscription()
-    {
-        return this.subscription;
-    }
-    public void setSubscription(ProviderSub subscription)
-    {
-        this.subscription = subscription;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-    public User getUser()
-    {
-        return this.user;
-    }
-    public void setUser(User user)
-    {
-        this.user = user;
-    }
-    public List<ProviderService> setProviderServices() {
-        return providerServices;
-    }
-
-    public void setProviderServices(List<ProviderService> providerServices) {
-        this.providerServices = providerServices;
-    }
 }
