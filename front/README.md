@@ -1,6 +1,6 @@
 # front
 
-A new Flutter project.
+Фронт (flutter)
 
 ## Getting Started
 
