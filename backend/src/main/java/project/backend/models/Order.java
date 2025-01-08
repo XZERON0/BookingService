@@ -2,6 +2,8 @@ package project.backend.models;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,8 +12,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-
+import lombok.Data;
+import lombok.NoArgsConstructor;
 @Entity
+@Data
+@NoArgsConstructor
 @Table(name="orders")
 public class Order {
     @Id
@@ -19,9 +24,11 @@ public class Order {
     private long id;
 
     @OneToOne
+    @JsonManagedReference
     private User customer;
 
     @OneToOne
+    @JsonManagedReference
     private Provider provider;
 
     @Column(nullable = false)
@@ -30,33 +37,5 @@ public class Order {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public User getCustomer() {
-        return customer;
-    }
-
-    public Provider getProvider() {
-        return provider;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setCustomer(User customer) {
-        this.customer = customer;
-    }
-
-    public void setProvider(Provider provider) {
-        this.provider = provider;
     }
 }
