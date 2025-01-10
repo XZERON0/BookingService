@@ -13,11 +13,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Provider {
     @Id
@@ -35,7 +34,6 @@ public class Provider {
     @OneToOne
     @JoinColumn(name="user_id", nullable=false)
     private User user;
-    
     @Column(nullable=false)
     @Enumerated(EnumType.STRING)
     private ProviderSub subscription = ProviderSub.basic;

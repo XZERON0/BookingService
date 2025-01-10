@@ -1,5 +1,6 @@
 package project.backend.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import project.backend.DTO.OrderDTO;
 import project.backend.models.Order;
 import project.backend.repository.OrderRepository;
-import java.util.List;
+
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -21,10 +23,10 @@ public class OrderController {
     private OrderRepository rep;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrder(@PathVariable Long id)
+    public ResponseEntity<OrderDTO> getOrder(@PathVariable Long id)
     {
         Optional<Order> order = rep.findById(id);
-        return ResponseEntity.ok(order.get());
+        return ResponseEntity.ok(new OrderDTO(order.get().getId(), null, null, order.get().getCreatedAt()));
     }
     @PostMapping
     public ResponseEntity<String> postOrder(@RequestBody Order order)
@@ -33,9 +35,12 @@ public class OrderController {
         return ResponseEntity.ok("success");
     }
     @GetMapping
-    public ResponseEntity<List<Order>> getAllOrder()
+    public ResponseEntity<List<OrderDTO>> getAllOrder()
     {
         List<Order> orders = rep.findAll();
-        return ResponseEntity.ok(orders);
+        List<OrderDTO> orderDTOs = orders.stream()
+                .map(order -> new OrderDTO(order.getId(), null, null, order.getCreatedAt()))
+                .toList();
+        return ResponseEntity.ok(orderDTOs);
     }
 }
