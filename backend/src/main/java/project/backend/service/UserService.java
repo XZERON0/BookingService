@@ -1,4 +1,3 @@
-// UserService.java
 package project.backend.service;
 
 import java.util.Optional;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import project.backend.models.User;
 import project.backend.repository.UserReposity;
+
 @Service
 public class UserService {
 
@@ -21,19 +21,19 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public User registerUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Используется Singleton
         return userRepository.save(user);
     }
 
     public boolean checkPassword(String rawPassword, String hashedPassword) {
-        return passwordEncoder.matches(rawPassword, hashedPassword);
+        return passwordEncoder.matches(rawPassword, hashedPassword); // Используется Singleton
     }
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-    public Page<User> getAllUser(Pageable pageable)
-    {
+
+    public Page<User> getAllUser(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 }

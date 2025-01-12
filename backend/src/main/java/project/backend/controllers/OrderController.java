@@ -21,13 +21,12 @@ import project.backend.repository.OrderRepository;
 public class OrderController {
     @Autowired
     private OrderRepository rep;
-
-    @GetMapping("/{id}")
-    public ResponseEntity<OrderDTO> getOrder(@PathVariable Long id)
-    {
-        Optional<Order> order = rep.findById(id);
-        return ResponseEntity.ok(new OrderDTO(order.get().getId(), null, null, order.get().getCreatedAt()));
-    }
+@GetMapping("/{id}")
+public ResponseEntity<Order> getOrder(@PathVariable Long id)
+{
+    Optional<Order> order = rep.findById(id);
+    return ResponseEntity.ok(order.get());
+}
     @PostMapping
     public ResponseEntity<String> postOrder(@RequestBody Order order)
     {
