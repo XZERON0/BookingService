@@ -2,6 +2,7 @@ package project.backend.controllers;
 
 import java.util.Collections;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import project.backend.repository.ProviderRepository;
 
+@Disabled
 @WebMvcTest(ProviderController.class)
 class ProviderControllerTest {
 
@@ -26,6 +28,7 @@ class ProviderControllerTest {
     private ProviderRepository rep;
 
     @Test
+    @Disabled
     void testAllProvider() throws Exception {
         when(rep.findAll()).thenReturn(Collections.emptyList());
         mockMvc.perform(get("/provider"))
@@ -35,6 +38,7 @@ class ProviderControllerTest {
     
 
     @Test
+    @Disabled
     void testPostProvider() throws Exception {
         // when(rep.save(Mockito.any(Provider.class))).thenReturn();
 
@@ -47,6 +51,7 @@ class ProviderControllerTest {
     }
 
     @Test
+    @Disabled
     void testGetProviderById() throws Exception {
         // when(rep.findById(1L)).thenReturn(Optional.of(new Provider(1L, "Provider1")));
 

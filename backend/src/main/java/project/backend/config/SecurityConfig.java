@@ -13,17 +13,22 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private static PasswordEncoder instance;
 
+    // Использование Singleton для PasswordEncoder
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        if (instance == null) {
+            instance = new BCryptPasswordEncoder();
+        }
+        return instance;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) 
-                .authorizeHttpRequests(auth -> auth
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/service/**", "/user/register").permitAll()
                 .requestMatchers("user/current").authenticated()
                 .anyRequest().authenticated()
@@ -34,6 +39,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
@@ -41,13 +47,4 @@ public class SecurityConfig {
             .password("alter123")
             .roles("USER");
     }
-    // @Bean
-    // public UserDetailsService users()
-    // {
-    //     UserDetails admin = User.builder()
-    //     .username("username").password("password").roles("ADMIN").build();
-        
-    //     UserDetails user = User.builder().username("username").password("password").roles("USER").build();
-    //     return new InMemoryUserDetailsManager(admin, user);
-    // }
 }

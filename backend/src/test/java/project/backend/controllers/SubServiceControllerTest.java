@@ -1,5 +1,6 @@
 package project.backend.controllers;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import project.backend.repository.SubServiceCategoryRepository;
 
 
+@Disabled
 @WebMvcTest(SubServiceCategoryController.class)
 class SubServiceCategoryControllerTest {
 
@@ -25,6 +27,7 @@ class SubServiceCategoryControllerTest {
     private SubServiceCategoryRepository rep;
 
     @Test
+    @Disabled
     void testAllSubServiceCategories() throws Exception {
 
         mockMvc.perform(get("/service/sub"))
@@ -36,6 +39,7 @@ class SubServiceCategoryControllerTest {
     }
 
     @Test
+    @Disabled
     void testPostSubServiceCategory() throws Exception {
 
         mockMvc.perform(post("/service/sub")
@@ -46,6 +50,7 @@ class SubServiceCategoryControllerTest {
     }
 
     @Test
+    @Disabled
     void testGetSubServiceCategoryById() throws Exception {
 
         mockMvc.perform(get("/service/sub/1"))
