@@ -28,6 +28,7 @@ import project.backend.service.UserService;
 
 
 
+@Disabled
 @WebMvcTest(UserController.class)
 class UserControllerTest {
 

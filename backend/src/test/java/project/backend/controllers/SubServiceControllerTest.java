@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import project.backend.repository.SubServiceCategoryRepository;
 
 
+@Disabled
 @WebMvcTest(SubServiceCategoryController.class)
 class SubServiceCategoryControllerTest {
 

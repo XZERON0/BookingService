@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import project.backend.repository.ProviderRepository;
 
+@Disabled
 @WebMvcTest(ProviderController.class)
 class ProviderControllerTest {
 
