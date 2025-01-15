@@ -86,7 +86,10 @@ public class UserController {
                 jwtService.testUser(user);
                 String token = jwtService.generateToken(user);
                 System.out.println(token);
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+                Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
                 return ResponseEntity.ok("Ok");
             } else {
                 return ResponseEntity.badRequest().body("Неверный пароль");

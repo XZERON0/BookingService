@@ -15,6 +15,11 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private final CustomUserDetailsService userDetailsService;
+
+    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -35,25 +40,20 @@ public class SecurityConfig {
 
         return http.build();
     }
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-            .withUser("alter")
-            .password("alter123")
-            .roles("USER");
-    }
+    // @Autowired
+    // public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    //     auth.inMemoryAuthentication()
+    //         .withUser("alter")
+    //         .password("alter123")
+    //         .roles("USER");
+    // }
     @Bean 
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception
     {
         return config.getAuthenticationManager();
     }
-    // @Bean
-    // public UserDetailsService users()
-    // {
-    //     UserDetails admin = User.builder()
-    //     .username("username").password("password").roles("ADMIN").build();
-        
-    //     UserDetails user = User.builder().username("username").password("password").roles("USER").build();
-    //     return new InMemoryUserDetailsManager(admin, user);
-    // }
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
 }

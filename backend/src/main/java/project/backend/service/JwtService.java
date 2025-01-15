@@ -23,6 +23,7 @@ public class JwtService {
     private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long expirationTime = 86400000; // 1 день
 
+    @SuppressWarnings("deprecation")
     public String generateToken(Optional<User> user) {
         return Jwts.builder()
         .setSubject(user.map(User::toString).orElse(""))
