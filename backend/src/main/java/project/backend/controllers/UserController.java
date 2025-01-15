@@ -8,9 +8,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import project.backend.models.User;
 import project.backend.repository.UserReposity;
+import project.backend.service.JwtService;
 import project.backend.service.UserService;
 
 @RestController
@@ -38,25 +40,17 @@ public class UserController {
 
     @Autowired
     private UserReposity userRepository;
-
-    @GetMapping("current")
-    public String getCurrentUser()
-    {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Authentication: " + authentication);
-        if (authentication != null && authentication.isAuthenticated())
-        {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof UserDetails)
-                return "Текущий пользователь: "+ ((UserDetails) principal).getUsername();
-            else
-            {
-                return  "Текущий пользователь (не стандартный): " + principal;
-            }
-
-        } 
-        return "Нет авторизованного пользователя";
-    }
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+   @GetMapping("/current")
+public ResponseEntity<?> getProfile() {
+    return userService.getCurrentUser()
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.status(403).build());
+}
+    
 
     @PostMapping("/register")
 
@@ -68,15 +62,21 @@ public class UserController {
         userService.registerUser(user);
         return ResponseEntity.ok("Пользователь успешно зарегистрирован");
     }
-
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody User loginRequest) {
-        // Optional<User> user = userRepository.findById(loginRequest.getId());
         Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
+        System.out.println("NINE");
         if (user.isPresent()) {
             boolean isPasswordMatch = userService.checkPassword(loginRequest.getPassword(), user.get().getPassword());
             if (isPasswordMatch) {
-                return ResponseEntity.ok("Успешный вход");
+                String token = jwtService.generateToken(user);
+                System.out.println(token);
+                Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                // Вместо "Ok" возвращаем сам токен
+                return ResponseEntity.ok(token);
             } else {
                 return ResponseEntity.badRequest().body("Неверный пароль");
             }
@@ -84,8 +84,8 @@ public class UserController {
             return ResponseEntity.badRequest().body("Пользователь не найден");
         }
     }
-
-    @GetMapping("/user/{id}")
+    
+    @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
@@ -94,7 +94,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/users")
+    @GetMapping
     public Page<User> getAllUsers
     (@RequestParam(defaultValue="0") int page,  
     @RequestParam(defaultValue = "5") int size,
@@ -106,7 +106,7 @@ public class UserController {
         return userService.getAllUser(pageable);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User user) {
     Optional<User> existingUser = userRepository.findById(id);
     if (existingUser.isPresent()) {
