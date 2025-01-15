@@ -26,17 +26,11 @@ public class JwtService {
     @SuppressWarnings("deprecation")
     public String generateToken(Optional<User> user) {
         return Jwts.builder()
-        .setSubject(user.map(User::toString).orElse(""))
+        .setSubject(user.map(User:: getEmail).orElse(""))
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
         .signWith(secretKey)
         .compact();
-    }
-    
-    public String testUser(Optional<User> user)
-    {
-        System.out.println("ATOMIC: "+user);
-        return "Atom";
     }
     @SuppressWarnings("deprecation")
     public boolean validateToken(String token) {

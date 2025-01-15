@@ -12,7 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,24 +44,13 @@ public class UserController {
     private JwtService jwtService;
     @Autowired
     private AuthenticationManager authenticationManager;
-    @GetMapping("/current")
-    public String getCurrentUser()
-    {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Authentication: " + authentication);
-        if (authentication != null && authentication.isAuthenticated())
-        {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof UserDetails userDetails)
-                return "Текущий пользователь: "+ userDetails.getUsername();
-            else
-            {
-                return  "Текущий пользователь (не стандартный): " + principal;
-            }
-
-        } 
-        return "Нет авторизованного пользователя";
-    }
+   @GetMapping("/current")
+public ResponseEntity<?> getProfile() {
+    return userService.getCurrentUser()
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.status(403).build());
+}
+    
 
     @PostMapping("/register")
 
@@ -74,23 +62,21 @@ public class UserController {
         userService.registerUser(user);
         return ResponseEntity.ok("Пользователь успешно зарегистрирован");
     }
-
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody User loginRequest) {
-        // Optional<User> user = userRepository.findById(loginRequest.getId());
         Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
         System.out.println("NINE");
         if (user.isPresent()) {
             boolean isPasswordMatch = userService.checkPassword(loginRequest.getPassword(), user.get().getPassword());
             if (isPasswordMatch) {
-                jwtService.testUser(user);
                 String token = jwtService.generateToken(user);
                 System.out.println(token);
                 Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
                 );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                return ResponseEntity.ok("Ok");
+                // Вместо "Ok" возвращаем сам токен
+                return ResponseEntity.ok(token);
             } else {
                 return ResponseEntity.badRequest().body("Неверный пароль");
             }
@@ -98,7 +84,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Пользователь не найден");
         }
     }
-
+    
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         Optional<User> user = userRepository.findById(id);

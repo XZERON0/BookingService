@@ -5,7 +5,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,6 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    AuthenticationManager authenticationManager;
 
     public User registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword())); 
@@ -40,4 +39,23 @@ public class UserService {
     public Page<User> getAllUser(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
+    public Optional<User> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication);
+        if (authentication != null && authentication.isAuthenticated()) {
+            System.out.println("Principal: " + authentication.getPrincipal());
+            System.out.println("Authorities: " + authentication.getAuthorities());
+            Object principal = authentication.getPrincipal();
+            
+            // Проверка, что principal - это строка (email)
+            if (principal instanceof String) {
+                String username = (String) principal;  // email пользователя
+                System.out.println("Email: " + username);
+                return userRepository.findByEmail(username);  // Получаем пользователя по email
+            }
+        }
+        return Optional.empty();
+    }
+    
+
 }
