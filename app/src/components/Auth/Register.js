@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../../api/ApiClient";
+import useAuth from "../../hooks/useAuth";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const {login} = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -14,11 +16,8 @@ const Register = () => {
     try {
       const response = await apiClient.post("/user/register", { name,email, password });
       console.log(response);
-      
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        navigate("/");  // Перенаправление на главную страницу
-      }
+      login(response.data);
+
     } catch (err) {
       setError("Ошибка при регистрации. Попробуйте снова.");
     }

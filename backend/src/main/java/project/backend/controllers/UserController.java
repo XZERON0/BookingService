@@ -60,12 +60,18 @@ public ResponseEntity<?> getProfile() {
             return ResponseEntity.badRequest().body("Пользователь с таким email уже существует");
         }
         userService.registerUser(user);
-        return ResponseEntity.ok("Пользователь успешно зарегистрирован");
+        String token = jwtService.generateToken(existingUser);
+        System.out.println(token);
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // Вместо "Ok" возвращаем сам токен
+        return ResponseEntity.ok(token);
     }
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody User loginRequest) {
         Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
-        System.out.println("NINE");
         if (user.isPresent()) {
             boolean isPasswordMatch = userService.checkPassword(loginRequest.getPassword(), user.get().getPassword());
             if (isPasswordMatch) {
