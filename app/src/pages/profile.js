@@ -1,39 +1,59 @@
 import React, { useEffect, useState } from "react";
+import { useAuthContext } from "../context/AuthContext";
+import { useNavigate, useParams } from "react-router-dom";
 import apiClient from "../api/ApiClient";
-import useAuth from "../hooks/useAuth";  // Исправлено импортирование
-import { useParams } from "react-router-dom";
+import routes from "../routes";
 
 const CurrentUser = () => {
-  const { logout } = useAuth();  // Используем хук useAuth
-  const [data, setData] = useState({});  // Используем объект вместо массива
-  const {userId} = useParams();
-  const [currentUserId, uId] = useState("");
+  const { user, logout} = useAuthContext();
+  const { userId } = useParams();
+  const [fetchedUser, setFetchedUser] = useState(null);
+  const [myProfile, setMyProfile] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
-    apiClient.get("/user/current").then(response=>{console.log(response.data);
-      uId(response.data.id);
-    }).catch((error)=>console.error(error)
-    );
-    apiClient.get(`/user/${userId}`).then(
-      (response) => {
-        console.log(response);
-        setData(response.data); 
+    if (user && user.id==userId) {
+      document.title = "Ваш профиль";
+      setMyProfile(true);
+    }
+    
+    else {
+      apiClient.get(`/user/${userId}`)
+        .then(response => {
+          setFetchedUser(response.data);
+          document.title = `${response.data.name} - Профиль`;
+        })
+        .catch(error => {
+          console.error(error);
+          document.title = "Ошибка загрузки профиля";
+        });
       }
-    ).catch((error) => console.error("Ошибка при загрузке данных: " + error));
-  }, []);  // Массив зависимостей пустой, чтобы запрос выполнялся только при монтировании
+
+    return () => {
+      document.title = "Мой сайт";
+    };
+  }, [user, userId]);
 
   const handleLogout = () => {
-    logout();  // Вызываем logout из useAuth
+    logout();
+    navigate(routes.home);
   };
+  
+
+  // Проверяем, если данные о пользователе еще не загружены
+  const currentUser = myProfile? user : fetchedUser;
+
+  if (!currentUser) {
+    return <p>Загрузка профиля...</p>;
+  }
 
   return (
     <div>
       <h1>Пользователь</h1>
-      <p>Имя: {data.name}</p>
-      <p>Email: {data.email}</p>
-      {currentUserId === data.id && (
-        <button onClick={handleLogout}>Выйти</button>  // Кнопка для выхода
+      <p>Имя: {currentUser.name}</p>
+      <p>Email: {currentUser.email}</p>
+      {myProfile && currentUser.id == userId && (
+        <button onClick={handleLogout}>Выйти</button>
       )}
-
     </div>
   );
 };

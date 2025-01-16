@@ -1,21 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Main from "./pages/Main";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext"; // Импортируем AuthProvider
 import Register from "./components/Auth/Register";
 import Login from "./components/Auth/Login";
 import CurrentUser from "./pages/profile";
 import routes from "./routes";
+
 const App = () => {
   return (
-    <AuthProvider>
+    <AuthProvider> 
       <Router>
         <nav>
           <ul>
             <li><Link to={routes.home}>Главная</Link></li>
             <li><Link to={routes.index}>Индекс</Link></li>
+            <li><Link to={routes.login}>Вход</Link></li>
+            <li><Link to={routes.register}>Регистрация</Link></li>
+            <li><Link to={routes.userProfile}>Профиль</Link></li>
           </ul>
         </nav>
         <Routes>

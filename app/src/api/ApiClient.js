@@ -1,14 +1,18 @@
 import axios from "axios";
-const token = localStorage.getItem('token');
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
+console.log("accessToken"+token);
+console.log("refreshToken"+Cookies.get('refreshToken'));
+
 let headers = 
 {
   "Content-Type": "application/json",
 }
-if (token)
-{
-  headers["Authorization"]=`Bearer ${token}`
-}
-console.log(headers);
+
+if (token!= null) 
+  {
+    headers["Authorization"]=`Bearer ${token}`
+  }
 
 const apiClient = axios.create({
   baseURL: "http://localhost:8080",
