@@ -6,7 +6,7 @@ import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
 import Register from "./components/Auth/Register";
 import Login from "./components/Auth/Login";
-import CurrentUser from "./pages/CurrentUser";
+import CurrentUser from "./pages/profile";
 import routes from "./routes";
 const App = () => {
   return (

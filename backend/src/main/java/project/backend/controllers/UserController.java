@@ -1,5 +1,7 @@
 package project.backend.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,39 +52,44 @@ public ResponseEntity<?> getProfile() {
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.status(403).build());
 }
-    
 
     @PostMapping("/register")
 
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
             return ResponseEntity.badRequest().body("Пользователь с таким email уже существует");
         }
         userService.registerUser(user);
-        String token = jwtService.generateToken(existingUser);
+        String token = jwtService.generateAccessToken(user.getEmail());
         System.out.println(token);
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // Вместо "Ok" возвращаем сам токен
-        return ResponseEntity.ok(token);
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("user", existingUser);
+        return ResponseEntity.ok(response);
     }
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody User loginRequest) {
+    public ResponseEntity<?> loginUser(@RequestBody User loginRequest) {
         Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
         if (user.isPresent()) {
             boolean isPasswordMatch = userService.checkPassword(loginRequest.getPassword(), user.get().getPassword());
             if (isPasswordMatch) {
-                String token = jwtService.generateToken(user);
+                String token = jwtService.generateAccessToken(user.get().getEmail());
                 System.out.println(token);
                 Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
                 );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 // Вместо "Ok" возвращаем сам токен
-                return ResponseEntity.ok(token);
+                Map<String, Object> response = new HashMap<>();
+                response.put("token", token);
+                response.put("user", user);
+                return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity.badRequest().body("Неверный пароль");
             }
@@ -124,7 +131,7 @@ public ResponseEntity<?> getProfile() {
         return ResponseEntity.badRequest().body("Пользователь не найден");
     }
 }
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         Optional<User> existingUser = userRepository.findById(id);
         if (existingUser.isPresent()) {

@@ -2,7 +2,6 @@ package project.backend.service;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,22 +14,31 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
-import project.backend.models.User;
 
 @Service
 public class JwtService {
     @SuppressWarnings("deprecation")
     private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long expirationTime = 86400000; // 1 день
+    private final long refreshExpirationTime = 604800000; // 1 день
 
     @SuppressWarnings("deprecation")
-    public String generateToken(Optional<User> user) {
+    public String generateAccessToken(String email) {
         return Jwts.builder()
-        .setSubject(user.map(User:: getEmail).orElse(""))
-        .setIssuedAt(new Date())
-        .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-        .signWith(secretKey)
-        .compact();
+            .setSubject(email)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + 60000)) // 15 минут
+            .signWith(secretKey)
+            .compact();
+    }
+    
+    @SuppressWarnings("deprecation")
+    public String generateRefreshToken(String email) {
+        return Jwts.builder()
+            .setSubject(email)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationTime)) // 7 дней
+            .signWith(secretKey)
+            .compact();
     }
     @SuppressWarnings("deprecation")
     public boolean validateToken(String token) {
@@ -53,6 +61,8 @@ public class JwtService {
                            .parseClaimsJws(token)
                            .getBody()
                            .getSubject();
+        // return new UsernamePasswordAuthenticationToken(email, null, getRolesFromToken(token));
+
         return new UsernamePasswordAuthenticationToken(email, null, List.of()); // Заменить на роли
     }
 }

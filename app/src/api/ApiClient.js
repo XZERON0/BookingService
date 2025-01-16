@@ -13,6 +13,7 @@ console.log(headers);
 const apiClient = axios.create({
   baseURL: "http://localhost:8080",
   headers: headers,
+  withCredentials: true
 });
 
 export default apiClient;

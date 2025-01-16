@@ -15,8 +15,8 @@ const Register = () => {
     e.preventDefault();
     try {
       const response = await apiClient.post("/user/register", { name,email, password });
-      console.log(response);
-      login(response.data);
+      console.log(response.data);
+      // login(response.data.token, response.data.user);
 
     } catch (err) {
       setError("Ошибка при регистрации. Попробуйте снова.");

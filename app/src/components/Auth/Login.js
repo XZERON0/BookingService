@@ -2,23 +2,32 @@ import React, { Component, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../api/ApiClient';
 import useAuth from '../../hooks/useAuth';
+import routes, {url} from '../../routes';
 const Login = ()=>{
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error ,setError] = useState("");
-    const {login} = useAuth();
-
+    const {isAuthenticated,login} = useAuth();
+    const navigate = useNavigate();
     const handleSubmit = async (e)=>{
         e.preventDefault();
         try
         {
             const response = await apiClient.post("/user/login", {email, password});
-            let token = response.data;
+            let token = response.data.token;
+            console.log(response.data.user.id);
             login(token);
+            const userProfileUrl = url(routes.userProfile, { userId: response.data.user.id });
+            console.log(userProfileUrl);
+            navigate(userProfileUrl); 
+            
+            
         }
         catch (err)
         {
             setError("Ошибка при входе");
+            console.log(err);
+            
         }
     }
     return (
