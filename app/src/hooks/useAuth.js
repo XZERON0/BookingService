@@ -42,6 +42,7 @@ const useAuth = () => {
         })
         .catch(() => {
           setIsAuthenticated(false); // Если refresh токен невалиден, сбрасываем статус аутентификации
+          Cookies.remove("refreshToken");
         });
     }
   };

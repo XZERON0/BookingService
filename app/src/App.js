@@ -30,7 +30,7 @@ const App = () => {
           </ul>
         </nav>
         <Routes>
-          <Route path={routes.home} element={<Main />} />
+          <Route path={routes.home} element={<Main />}  />
           <Route path={routes.index} element={<Index />} />
           <Route path={routes.login} element={<Login />} />
           <Route path={routes.register} element={<Register />} />

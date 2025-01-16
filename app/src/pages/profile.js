@@ -1,27 +1,46 @@
 import React, { useEffect, useState } from "react";
 import apiClient from "../api/ApiClient";
-import useAuth from "../hooks/useAuth";  // Исправлено импортирование
+import useAuth from "../hooks/useAuth";
 import { useParams } from "react-router-dom";
 
 const CurrentUser = () => {
-  const { logout } = useAuth();  // Используем хук useAuth
-  const [data, setData] = useState({});  // Используем объект вместо массива
-  const {userId} = useParams();
+  const { logout } = useAuth();
+  const [data, setData] = useState({});
+  const { userId } = useParams();
   const [currentUserId, uId] = useState("");
+
   useEffect(() => {
-    apiClient.get("/user/current").then(response=>{console.log(response.data);
+    // Получение текущего пользователя
+    apiClient.get("/user/current").then((response) => {
+      console.log(response.data);
       uId(response.data.id);
-    }).catch((error)=> {}
-    );
-    apiClient.get(`/user/${userId}`).then(
-      (response) => {
-        setData(response.data); 
-      }
-    ).catch((error) => console.error("Ошибка при загрузке данных: " + error));
-  }, []);  // Массив зависимостей пустой, чтобы запрос выполнялся только при монтировании
+    }).catch((error) => console.error("Ошибка получения текущего пользователя: ", error));
+
+    // Получение данных пользователя по ID
+    apiClient.get(`/user/${userId}`).then((response) => {
+      setData(response.data);
+    }).catch((error) => console.error("Ошибка при загрузке данных: ", error));
+  }, [userId]); // Добавьте userId в зависимости, чтобы обновление происходило при изменении параметра
+
+  useEffect(() => {
+    // Изменение title страницы
+    if (data.name && data.id != currentUserId) {
+      document.title = `${data.name} - Профиль`;}
+    else if(data.id == currentUserId) 
+      {
+        document.title = "Ваш профиль";
+    } else {
+      document.title = "Загрузка профиля..."; // Временный title
+    }
+
+    // Очистка title при размонтировании компонента
+    return () => {
+      document.title = "Мой сайт"; // Установите базовый title
+    };
+  }, [data.name]); // Изменяйте title при изменении имени пользователя
 
   const handleLogout = () => {
-    logout();  // Вызываем logout из useAuth
+    logout();
   };
 
   return (
@@ -30,9 +49,8 @@ const CurrentUser = () => {
       <p>Имя: {data.name}</p>
       <p>Email: {data.email}</p>
       {currentUserId === data.id && (
-        <button onClick={handleLogout}>Выйти</button>  // Кнопка для выхода
+        <button onClick={handleLogout}>Выйти</button>
       )}
-
     </div>
   );
 };
