@@ -1,54 +1,54 @@
 import React, { useEffect, useState } from "react";
-import apiClient from "../api/ApiClient";
-import useAuth from "../hooks/useAuth";
+import { useAuthContext } from "../context/AuthContext";
 import { useParams } from "react-router-dom";
+import apiClient from "../api/ApiClient";
 
 const CurrentUser = () => {
-  const { logout } = useAuth();
-  const [data, setData] = useState({});
+  const { user, logout} = useAuthContext();
   const { userId } = useParams();
-  const [currentUserId, uId] = useState("");
-
+  const [fetchedUser, setFetchedUser] = useState(null);
+  const [myProfile, setMyProfile] = useState(false);
   useEffect(() => {
-    // Получение текущего пользователя
-    apiClient.get("/user/current").then((response) => {
-      console.log(response.data);
-      uId(response.data.id);
-    }).catch((error) => console.error("Ошибка получения текущего пользователя: ", error));
-
-    // Получение данных пользователя по ID
-    apiClient.get(`/user/${userId}`).then((response) => {
-      setData(response.data);
-    }).catch((error) => console.error("Ошибка при загрузке данных: ", error));
-  }, [userId]); // Добавьте userId в зависимости, чтобы обновление происходило при изменении параметра
-
-  useEffect(() => {
-    // Изменение title страницы
-    if (data.name && data.id != currentUserId) {
-      document.title = `${data.name} - Профиль`;}
-    else if(data.id == currentUserId) 
-      {
-        document.title = "Ваш профиль";
-    } else {
-      document.title = "Загрузка профиля..."; // Временный title
+    if (user && user.id==userId) {
+      document.title = "Ваш профиль";
+      setMyProfile(true);
     }
+    
+    else {
+      apiClient.get(`/user/${userId}`)
+        .then(response => {
+          setFetchedUser(response.data);
+          document.title = `${response.data.name} - Профиль`;
+        })
+        .catch(error => {
+          console.error(error);
+          document.title = "Ошибка загрузки профиля";
+        });
+      }
 
-    // Очистка title при размонтировании компонента
     return () => {
-      document.title = "Мой сайт"; // Установите базовый title
+      document.title = "Мой сайт";
     };
-  }, [data.name]); // Изменяйте title при изменении имени пользователя
+  }, [user, userId]);
 
   const handleLogout = () => {
     logout();
   };
+  
+
+  // Проверяем, если данные о пользователе еще не загружены
+  const currentUser = myProfile? user : fetchedUser;
+
+  if (!currentUser) {
+    return <p>Загрузка профиля...</p>;
+  }
 
   return (
     <div>
       <h1>Пользователь</h1>
-      <p>Имя: {data.name}</p>
-      <p>Email: {data.email}</p>
-      {currentUserId === data.id && (
+      <p>Имя: {currentUser.name}</p>
+      <p>Email: {currentUser.email}</p>
+      {currentUser.id === userId && (
         <button onClick={handleLogout}>Выйти</button>
       )}
     </div>

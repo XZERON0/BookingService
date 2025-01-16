@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import apiClient from "../api/ApiClient";
+import apiClient from "../api/ApiClient";  // Предполагается, что apiClient - это конфигурация для вашего API.
 
 const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -22,6 +22,8 @@ const useAuth = () => {
           setIsAuthenticated(false); // В случае ошибки токен невалиден
           refreshToken(); // Попытаться обновить токен
         });
+    } else {
+      setIsAuthenticated(false); // Если нет токена, сразу помечаем как неаутентифицированного
     }
   }, []); // Этот хук срабатывает только при монтировании компонента
 
@@ -50,7 +52,6 @@ const useAuth = () => {
   const login = (token, refreshToken) => {
     Cookies.set("token", token, { expires: 7, secure: true }); // Сохраняем токен в cookies (срок жизни 7 дней)
     Cookies.set("refreshToken", refreshToken, { expires: 7, secure: true }); // Сохраняем refresh token
-    console.log(Cookies.get('refreshToken'));
     
     setIsAuthenticated(true); // Помечаем пользователя как аутентифицированного
   };
