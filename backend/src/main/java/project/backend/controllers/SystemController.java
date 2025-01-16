@@ -17,24 +17,33 @@ import project.backend.service.JwtService;
 @RestController
 @RequestMapping("/system")
 public class SystemController {
+    private final JwtService jwtService;
 
-
-    private JwtService jwtService;
+    public SystemController(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+    
     @PostMapping("/token/refresh")
     public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String refreshToken) {
+        System.out.println("Received raw header: " + refreshToken); // Лог исходного заголовка
+        refreshToken = refreshToken.replace("Bearer ", "").trim(); // Убираем лишний текст
+        System.out.println("Processed token: " + refreshToken); // Лог токена после обработки
+        
         if (jwtService.validateToken(refreshToken)) {
+            System.out.println("Token is valid");
             String newAccessToken = jwtService.generateAccessToken(jwtService.getAuthentication(refreshToken).getName());
             return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
     }
+    
+    
     @GetMapping("/token")
     public String checkToken()
     {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println(authentication.getPrincipal());
         System.out.println(authentication.getAuthorities());
-        System.out.println("geoo");
         if (authentication.getPrincipal() != "anonymousUser" && authentication.isAuthenticated())
         {
             return "Token is valid";

@@ -7,11 +7,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 
@@ -48,9 +46,13 @@ public class JwtService {
             .build()
             .parseClaimsJws(token);
             return true;
-        } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException | SecurityException | IllegalArgumentException e) {
-            return false;
-        }
+        } catch (SecurityException | MalformedJwtException e) {
+        System.out.println("Invalid JWT format: " + e.getMessage()); // Лог ошибки
+        return false;
+    } catch (Exception e) {
+        System.out.println("JWT validation error: " + e.getMessage()); // Общий лог ошибок
+        return false;
+    }
     }
     
     @SuppressWarnings("deprecation")

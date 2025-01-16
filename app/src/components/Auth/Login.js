@@ -16,7 +16,7 @@ const Login = ()=>{
             const response = await apiClient.post("/user/login", {email, password});
             let token = response.data.token;
             console.log(response.data.user.id);
-            login(token);
+            login(token, response.data.refreshToken);
             const userProfileUrl = url(routes.userProfile, { userId: response.data.user.id });
             console.log(userProfileUrl);
             navigate(userProfileUrl); 

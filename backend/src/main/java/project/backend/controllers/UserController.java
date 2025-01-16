@@ -62,6 +62,7 @@ public ResponseEntity<?> getProfile() {
         }
         userService.registerUser(user);
         String token = jwtService.generateAccessToken(user.getEmail());
+        String refreshToken = jwtService.generateRefreshToken(user.getEmail());
         System.out.println(token);
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
@@ -71,6 +72,7 @@ public ResponseEntity<?> getProfile() {
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
         response.put("user", existingUser);
+        response.put("refreshToken", refreshToken);
         return ResponseEntity.ok(response);
     }
     @PostMapping("/login")
@@ -80,6 +82,7 @@ public ResponseEntity<?> getProfile() {
             boolean isPasswordMatch = userService.checkPassword(loginRequest.getPassword(), user.get().getPassword());
             if (isPasswordMatch) {
                 String token = jwtService.generateAccessToken(user.get().getEmail());
+                String refreshToken = jwtService.generateAccessToken(user.get().getEmail()); 
                 System.out.println(token);
                 Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
@@ -88,6 +91,8 @@ public ResponseEntity<?> getProfile() {
                 // Вместо "Ok" возвращаем сам токен
                 Map<String, Object> response = new HashMap<>();
                 response.put("token", token);
+                response.put("refreshToken", refreshToken);
+
                 response.put("user", user);
                 return ResponseEntity.ok(response);
             } else {

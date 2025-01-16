@@ -11,11 +11,10 @@ const CurrentUser = () => {
   useEffect(() => {
     apiClient.get("/user/current").then(response=>{console.log(response.data);
       uId(response.data.id);
-    }).catch((error)=>console.error(error)
+    }).catch((error)=> {}
     );
     apiClient.get(`/user/${userId}`).then(
       (response) => {
-        console.log(response);
         setData(response.data); 
       }
     ).catch((error) => console.error("Ошибка при загрузке данных: " + error));

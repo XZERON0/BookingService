@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Main from "./pages/Main";
 import Index from "./pages/Index";
@@ -8,7 +8,18 @@ import Register from "./components/Auth/Register";
 import Login from "./components/Auth/Login";
 import CurrentUser from "./pages/profile";
 import routes from "./routes";
+import useAuth from "./hooks/useAuth"; // Импортируем хук
+
 const App = () => {
+  const { isAuthenticated, refreshToken } = useAuth();
+
+  useEffect(() => {
+    // Проверка и обновление токена при монтировании компонента
+    if (!isAuthenticated) {
+      refreshToken(); // Если пользователь не аутентифицирован, обновляем токен
+    }
+  }, [isAuthenticated, refreshToken]); // Перезапускаем хук при изменении isAuthenticated
+
   return (
     <AuthProvider>
       <Router>
