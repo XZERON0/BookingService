@@ -1,6 +1,8 @@
 import React from "react";
 
 const Main = () => {
+
+
   return (
     <div>
       <h1>Добро пожаловать на главную страницу!</h1>

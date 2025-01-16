@@ -41,16 +41,12 @@ public class UserService {
     }
     public Optional<User> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication);
         if (authentication != null && authentication.isAuthenticated()) {
-            System.out.println("Principal: " + authentication.getPrincipal());
-            System.out.println("Authorities: " + authentication.getAuthorities());
             Object principal = authentication.getPrincipal();
-            
+             
             // Проверка, что principal - это строка (email)
             if (principal instanceof String) {
                 String username = (String) principal;  // email пользователя
-                System.out.println("Email: " + username);
                 return userRepository.findByEmail(username);  // Получаем пользователя по email
             }
         }
