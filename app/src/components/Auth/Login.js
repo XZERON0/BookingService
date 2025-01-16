@@ -3,21 +3,27 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import apiClient from "../../api/ApiClient";
 import routes, { url } from "../../routes";
+import { useAuthContext } from "../../context/AuthContext";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const { login, isAuthenticated } = useAuth();
+    const { login, isAuthenticated} = useAuth();
+    const {user} = useAuthContext();
     const navigate = useNavigate();
     
     useEffect(()=>
         {
-            
-            document.title = "Логин";
-            if(isAuthenticated)
-                {
-                }
+        document.title = "Логин";
+        if(isAuthenticated && user)
+        {
+            navigate(url(routes.userProfile, { userId: user.id }));
+        }
+        // else
+        // {
+
+        // }
         })
 
   const handleSubmit = async (e) => {
@@ -52,6 +58,7 @@ const Login = () => {
         {error && <div style={{ color: "red" }}>{error}</div>}
         <button type="submit">Войти</button>
       </form>
+      <a href={routes.register}>Регистрация</a>
     </div>
   );
 };

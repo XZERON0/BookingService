@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import apiClient from "../api/ApiClient";
+import routes from "../routes";
 
 const CurrentUser = () => {
   const { user, logout} = useAuthContext();
   const { userId } = useParams();
   const [fetchedUser, setFetchedUser] = useState(null);
   const [myProfile, setMyProfile] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     if (user && user.id==userId) {
       document.title = "Ваш профиль";
@@ -33,6 +35,7 @@ const CurrentUser = () => {
 
   const handleLogout = () => {
     logout();
+    navigate(routes.home);
   };
   
 
@@ -48,7 +51,7 @@ const CurrentUser = () => {
       <h1>Пользователь</h1>
       <p>Имя: {currentUser.name}</p>
       <p>Email: {currentUser.email}</p>
-      {currentUser.id === userId && (
+      {myProfile && currentUser.id == userId && (
         <button onClick={handleLogout}>Выйти</button>
       )}
     </div>

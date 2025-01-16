@@ -52,29 +52,31 @@ public ResponseEntity<?> getProfile() {
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.status(403).build());
 }
-
-    @PostMapping("/register")
-
-    public ResponseEntity<?> registerUser(@RequestBody User user) {
-        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
-        if (existingUser.isPresent()) {
-            return ResponseEntity.badRequest().body("Пользователь с таким email уже существует");
-        }
-        userService.registerUser(user);
-        String token = jwtService.generateAccessToken(user.getEmail());
-        String refreshToken = jwtService.generateRefreshToken(user.getEmail());
-        System.out.println(token);
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
+@PostMapping("/register")
+public ResponseEntity<?> registerUser(@RequestBody User user) {
+    Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+    if (existingUser.isPresent()) {
+        return ResponseEntity.badRequest().body("Пользователь с таким email уже существует");
+    }
+    if (user.getPassword() == null || user.getPassword().isEmpty()) {
+        return ResponseEntity.badRequest().body("Пароль не может быть пустым");
+    }
+    if (user.getEmail() == null || user.getEmail().isEmpty()) {
+        return ResponseEntity.badRequest().body("Email не может быть пустым");
+    }
+    String token = jwtService.generateAccessToken(user.getEmail());
+    String refreshToken = jwtService.generateRefreshToken(user.getEmail());
+    userService.registerUser(user);
+    Authentication authentication = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        // Вместо "Ok" возвращаем сам токен
-        Map<String, Object> response = new HashMap<>();
-        response.put("token", token);
-        response.put("user", existingUser);
-        response.put("refreshToken", refreshToken);
-        return ResponseEntity.ok(response);
-    }
+    Map<String, Object> response = new HashMap<>();
+    response.put("token", token);
+    response.put("user", user);
+    response.put("refreshToken", refreshToken);
+    return ResponseEntity.ok(response);
+}
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User loginRequest) {
         Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
@@ -104,7 +106,7 @@ public ResponseEntity<?> getProfile() {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<User> getUserById(@PathVariable long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return ResponseEntity.ok(user.get());
@@ -125,7 +127,7 @@ public ResponseEntity<?> getProfile() {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<String> updateUser(@PathVariable long id, @RequestBody User user) {
     Optional<User> existingUser = userRepository.findById(id);
     if (existingUser.isPresent()) {
         existingUser.get().setEmail(user.getEmail());
@@ -137,7 +139,7 @@ public ResponseEntity<?> getProfile() {
     }
 }
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable long id) {
         Optional<User> existingUser = userRepository.findById(id);
         if (existingUser.isPresent()) {
             userRepository.delete(existingUser.get());

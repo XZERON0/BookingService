@@ -17,6 +17,9 @@ const App = () => {
           <ul>
             <li><Link to={routes.home}>Главная</Link></li>
             <li><Link to={routes.index}>Индекс</Link></li>
+            <li><Link to={routes.login}>Вход</Link></li>
+            <li><Link to={routes.register}>Регистрация</Link></li>
+            <li><Link to={routes.userProfile}>Профиль</Link></li>
           </ul>
         </nav>
         <Routes>

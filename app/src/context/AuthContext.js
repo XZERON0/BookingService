@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import apiClient from "../api/ApiClient"; 
+import routes from "../routes";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -11,7 +13,6 @@ export const useAuthContext = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   useEffect(() => {
     const token = Cookies.get("token");
     if (token) {

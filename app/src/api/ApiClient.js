@@ -9,7 +9,7 @@ let headers =
   "Content-Type": "application/json",
 }
 
-if (token)
+if (token!= null) 
   {
     headers["Authorization"]=`Bearer ${token}`
   }
