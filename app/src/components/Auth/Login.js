@@ -13,17 +13,13 @@ const Login = () => {
     const {user} = useAuthContext();
     const navigate = useNavigate();
     
+    document.title = "Логин";
     useEffect(()=>
         {
-        document.title = "Логин";
         if(isAuthenticated && user)
         {
             navigate(url(routes.userProfile, { userId: user.id }));
         }
-        // else
-        // {
-
-        // }
         })
 
   const handleSubmit = async (e) => {

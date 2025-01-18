@@ -31,14 +31,19 @@ public class UserService {
     public boolean checkPassword(String rawPassword, String hashedPassword) {
         return passwordEncoder.matches(rawPassword, hashedPassword); 
     }
-
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    public Page<User> getAllUser(Pageable pageable) {
+
+public Page<User> getAllUser(Pageable pageable, String search) {
+    if (search == null || search.isBlank())
+    {
         return userRepository.findAll(pageable);
+        
     }
+    return userRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(search, search, pageable);
+}
     public Optional<User> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {

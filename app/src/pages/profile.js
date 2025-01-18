@@ -11,6 +11,8 @@ const CurrentUser = () => {
   const [myProfile, setMyProfile] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
+    console.log(user);
+    
     if (user && user.id==userId) {
       document.title = "Ваш профиль";
       setMyProfile(true);
