@@ -1,62 +1,70 @@
 import React, { useEffect, useState } from "react";
-import apiClient from "../api/ApiClient"; // Убедитесь, что путь правильный
-
-
+import apiClient from "../api/ApiClient";
 const Index = () => {
   const [data, setData] = useState([]);
-  const [searchValue, setSV] = useState("");
-  document.title = "Сервисы";
-  useEffect(() => {
-    if (searchValue!== "") {
-      apiClient.get(`/user?search=${searchValue}`).then((response) => {
-        console.log(response);
-        
-        setData(response.data);
-        });
-      }
-    apiClient.get("/user?ascending=true")
-      .then(response => {
-        console.log(response.data.content);
-        
-        setData(response.data.content);
-      }, [])
-      .catch(error => console.error("Ошибка загрузки данных:", error));
-  }, [searchValue]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchValue, setSearchValue] = useState("");
 
-  // const handleSearch = (e) => {
-  //   setSV(e.target.value);
-  //   }
-  //   const filteredData = data.filter(item => item.name.toLowerCase().includes(searchValue.toLowerCase()));
-  //   console.log(filteredData);
-  //   return (
-  //     <div>
-  //       <input type="text" value={searchValue} onChange={handleSearch} placeholder="Поиск" />
-  //       <ul>
-  //         {filteredData.map((item, index) => (
-  //           <li key={index}>
-  //             <a href={item.url}>{item.name}</a>
-  //             </li>
-  //             ))}
-  //             </ul>
-  //     </div>
-  //   )}
-return (
-  
-  <div>
-    <div className="form-search">
-      <form>
-        <input type="text" name="searchUser" value={searchValue} onChange={(e)=> setSV(e.target.value)} />
-      </form>
-  </div>
-    {Array.isArray(data) && data.map(item => (
-      <div key={item.id}>   
-        <p>Имя: {item.name}</p>
-        <p>Фамилия: {item.email}</p>
-        <p>статус: {item.role}</p>
-        <p>ID: {item.id}</p>
+  document.title = "Сервисы";
+
+  useEffect(() => {
+    // Получение категорий
+    apiClient.get("/service")
+      .then(response => {setCategories(response.data);
+      })
+      .catch(error => console.error("Ошибка загрузки категорий:", error));
+
+    // Получение провайдеров
+    apiClient.get("/provider")
+      .then(response =>{ setData(response.data); console.log(response);
+      })
+      .catch(error => console.error("Ошибка загрузки данных:", error));
+  }, []);
+
+  const handleSearch = () => {
+    const query = `/user?search=${searchValue}&category=${selectedCategory}`;
+    apiClient.get(query)
+      .then(response => setData(response.data))
+      .catch(error => console.error("Ошибка поиска:", error));
+  };
+
+  return (
+    <div>
+      <div className="form-search">
+        <input
+          type="text"
+          name="searchUser"
+          value={searchValue}
+          placeholder="Поиск..."
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          <option value="">Все категории</option>
+          {categories.map(cat => (
+            <option key={cat.id} value={cat.id}>{cat.type}</option>
+          ))}
+        </select>
+        <button onClick={handleSearch}>Найти</button>
       </div>
-    ))}
-  </div>
-);
-}
+
+      {Array.isArray(data) && data.length > 0 ? (
+        data.map(item => (
+          <div key={item.id}>
+            <p>Имя: {item.name}</p>
+            <p>Email: {item.email}</p>
+            <p>Статус: {item.role}</p>
+            <p>ID: {item.id}</p>
+          </div>
+        ))
+      ) : (
+        <p>Ничего не найдено</p>
+      )}
+    </div>
+  );
+};
+
 export default Index;

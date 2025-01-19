@@ -8,34 +8,33 @@ import Login from "../components/Auth/Login";
 import Register from "../components/Auth/Register";
 import NotFound from "./NotFound";
 import useAuth from "../hooks/useAuth";
+import '../css/style.css';
 
 const BaseLayout = () => {
-  // const { user } = useAuthContext();
   const {logout} = useAuth();
   let user = useAuthContext().user;
-  if (!user || user == null)
-    {
-      user = localStorage.getItem('user');
-    }
+  if (!user || user == null) {
+    user = localStorage.getItem('user');
+  }
   return (
     <Router>
-      <nav>
-        <ul>
-          <li><a href="/">Главная</a></li>
-          <li><a href="/index">Индекс</a></li>
+      <nav className="nav-bar">
+        <ul className="nav-list">
+          <li className="nav-item"><a href="/" className="nav-link">Главная</a></li>
+          <li className="nav-item"><a href="/index" className="nav-link">Индекс</a></li>
           {user ? (
             <>
-              <li><a href={`/profile/${user.id}`}>Профиль</a></li>
-              <li><button onClick={() => {
+              <li className="nav-item"><a href={`/profile/${user.id}`} className="nav-link">Профиль</a></li>
+              <li className="nav-item"><button onClick={() => {
                 logout();
                 localStorage.removeItem('user');
                 window.location.reload();
-              }}>Выход</button></li>
+              }} className="nav-button">Выход</button></li>
             </>
           ) : (
             <>
-              <li><a href="/login">Вход</a></li>
-              <li><a href="/register">Регистрация</a></li>
+              <li className="nav-item"><a href="/login" className="nav-link">Вход</a></li>
+              <li className="nav-item"><a href="/register" className="nav-link">Регистрация</a></li>
             </>
           )}
         </ul>

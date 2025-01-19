@@ -29,14 +29,6 @@ const Register = () => {
       await apiClient.post("/user/register", { name,email, password });
       const loginResponse = await apiClient.post("/user/login", {email, password});      
       login(loginResponse.data.token, loginResponse.data.refreshToken, true);
-      await new Promise((resolve) => {
-        const checkUser = setInterval(() => {
-          if (user) {
-            clearInterval(checkUser);
-            resolve();
-          }
-        }, 100);
-      });
       handleNavigation(url(routes.userProfile, {userId:(loginResponse.data.user.id)}));
 
     } catch (err) {

@@ -1,0 +1,44 @@
+.form-search {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  input[type="text"] {
+    width: 300px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .nav-bar {
+    background-color: #333;
+    padding: 10px;
+  }
+  
+  .nav-list {
+    display: flex;
+    list-style: none;
+    justify-content: space-around;
+    padding: 0;
+  }
+  
+  .nav-link {
+    color: white;
+    text-decoration: none;
+  }
+  .nav-button
+  {
+    background: transparent;
+    outline: none;
+    color: white;
+    border: none;
+    cursor: pointer;
+    
+  }
+  .nav-link:hover {
+    text-decoration: underline;
+  }
+
+
+  
