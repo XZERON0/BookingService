@@ -19,5 +19,12 @@ export const url = (path, params) => {
     path
   );
 };
+
+export const handleNavigation = (route)=>
+  {
+    window.location = route;
+    console.log(window.location);
+    
+  };
   export default routes;
   

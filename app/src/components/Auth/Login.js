@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import apiClient from "../../api/ApiClient";
-import routes, { url } from "../../routes";
+import routes, { handleNavigation, url } from "../../routes";
 import { useAuthContext } from "../../context/AuthContext";
 
 const Login = () => {
@@ -11,30 +10,30 @@ const Login = () => {
     const [error, setError] = useState("");
     const { login, isAuthenticated} = useAuth();
     const {user} = useAuthContext();
-    const navigate = useNavigate();
     
     document.title = "Логин";
     useEffect(()=>
         {
+          
         if(isAuthenticated && user)
         {
-            navigate(url(routes.userProfile, { userId: user.id }));
+            handleNavigation(url(routes.userProfile, { userId: user.id }));
         }
-        })
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await apiClient.post("/user/login", { email, password });
-      const { token, refreshToken, user } = response.data;
-      login(token, refreshToken);
-      const userProfileUrl = url(routes.userProfile, { userId: user.id });
-      navigate(userProfileUrl);
-    } catch (err) {
-      setError("Ошибка при входе");
-      console.error(err);
-    }
-  };
+        }, [isAuthenticated, user]);
+        const handleSubmit = async (e) => {
+          e.preventDefault();
+          try {
+            const response = await apiClient.post("/user/login", { email, password });
+            login(response.data.token, response.data.refreshToken, true);
+            console.log(isAuthenticated);
+            
+              handleNavigation(url(routes.userProfile, { userId: response.data.user.id }));
+          } catch (err) {
+            setError("Ошибка при входе");
+            console.error(err);
+          }
+        };
+        
 
   return (
     <div className="login">

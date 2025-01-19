@@ -7,7 +7,7 @@ const Index = () => {
   const [searchValue, setSV] = useState("");
   document.title = "Сервисы";
   useEffect(() => {
-    if (searchValue!= "") {
+    if (searchValue!== "") {
       apiClient.get(`/user?search=${searchValue}`).then((response) => {
         console.log(response);
         
@@ -19,7 +19,7 @@ const Index = () => {
         console.log(response.data.content);
         
         setData(response.data.content);
-      })
+      }, [])
       .catch(error => console.error("Ошибка загрузки данных:", error));
   }, [searchValue]);
 

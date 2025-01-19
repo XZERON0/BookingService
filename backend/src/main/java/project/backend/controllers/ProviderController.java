@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import project.backend.models.Provider;
@@ -27,7 +28,16 @@ public class ProviderController {
         List<Provider> items = rep.findAll();
         return ResponseEntity.ok(items);
     }
-
+    @GetMapping("/check")
+    public ResponseEntity<?> checkUserIsProvider(@RequestParam long id)
+    {
+        Provider provider = rep.findById(id).orElse(null);
+        if (provider != null) {
+            return ResponseEntity.ok(true);
+            }
+            
+        return null;
+    }
     @PostMapping
     public ResponseEntity<Provider> post(@RequestBody Provider provider)
     {

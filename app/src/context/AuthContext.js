@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import apiClient from "../api/ApiClient"; 
-import routes from "../routes";
-import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -55,33 +53,35 @@ export const AuthProvider = ({ children }) => {
         });
     }
   };
-
-  const getUserInfo = () => {
-    apiClient.get("/user/current")
+  
+  const getUserInfo = async() => {
+    await apiClient.get("/user/current")
       .then(response => {
-        setUser(response.data);
-      })
-      .catch(() => {
+         setUser(response.data);
+         localStorage.setItem('user', response.data.id);
+        })
+        .catch(() => {
         setIsAuthenticated(false);
       });
   };
 
-  const login = (token, refreshToken) => {
+  const login =  async (token, refreshToken, callback) => {
     Cookies.set("token", token, { expires: 7, secure: true });
     Cookies.set("refreshToken", refreshToken, { expires: 7, secure: true });
+    await getUserInfo();
     setIsAuthenticated(true);
-    getUserInfo();
+    if (callback) callback();
   };
 
-  const logout = () => {
+  const logout =  async() => {
     Cookies.remove("token");
     Cookies.remove("refreshToken");
-    setIsAuthenticated(false);
     setUser(null);
+    setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, getUserInfo }}>
       {children}
     </AuthContext.Provider>
   );

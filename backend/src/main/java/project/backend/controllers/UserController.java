@@ -64,18 +64,8 @@ public ResponseEntity<?> registerUser(@RequestBody User user) {
     if (user.getEmail() == null || user.getEmail().isEmpty()) {
         return ResponseEntity.badRequest().body("Email не может быть пустым");
     }
-    String token = jwtService.generateAccessToken(user.getEmail());
-    String refreshToken = jwtService.generateRefreshToken(user.getEmail());
     userService.registerUser(user);
-    Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    Map<String, Object> response = new HashMap<>();
-    response.put("token", token);
-    response.put("user", user);
-    response.put("refreshToken", refreshToken);
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(user);
 }
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User loginRequest) {
