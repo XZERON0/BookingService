@@ -14,7 +14,6 @@ const Profile = () => {
         const response = await apiClient.get(`/user/${userId}`);
         setFetchedUser(response.data);
         document.title = `${response.data.name} - Профиль`;
-        const provider = await apiClient.get('')
       } catch (error) {
         console.error("Ошибка загрузки профиля:", error);
         document.title = "Ошибка загрузки профиля";

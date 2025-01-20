@@ -3,6 +3,7 @@ const routes = {
     index: "/index",
     userProfile:`/profile/:userId`,
     login: "/login",
+    order: "/order",
     register: "/register",
     about: "/about",
     // Добавьте сюда остальные маршруты
