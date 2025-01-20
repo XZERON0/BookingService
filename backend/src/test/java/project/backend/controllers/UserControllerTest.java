@@ -10,8 +10,6 @@ import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -110,20 +108,6 @@ class UserControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(1))
             .andExpect(jsonPath("$.email").value("test@example.com"));
-    }
-
-    @Test
-    @Disabled
-    void testGetAllUsers() throws Exception {
-        when(userService.getAllUser(Mockito.any(Pageable.class)))
-            .thenReturn(Page.empty());
-
-        mockMvc.perform(get("/user/users")
-                .param("page", "0")
-                .param("size", "5")
-                .param("sortBy", "id")
-                .param("ascending", "true"))
-            .andExpect(status().isOk());
     }
 
     @Test

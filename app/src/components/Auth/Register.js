@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import apiClient from "../../api/ApiClient";
 import useAuth from "../../hooks/useAuth";
-import { useAuthContext } from "../../context/AuthContext";
-import routes, { url } from "../../routes";
+import {useAuthContext } from "../../context/AuthContext";
+import routes, { handleNavigation, url } from "../../routes";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -11,7 +10,6 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const {login, isAuthenticated} = useAuth();
-  const navigate = useNavigate();
   const {user} = useAuthContext();
   // const [loading, setLoading] = useState(false);
   // const [success, setSuccess] = useState(false);
@@ -22,16 +20,16 @@ const Register = () => {
     document.title= "Регистрация";
     if (isAuthenticated && user)
       {
-        navigate(url(routes.userProfile, {userId:user.id}));
+        handleNavigation(url(routes.userProfile, {userId:user.id}));
       }
     })
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await apiClient.post("/user/register", { name,email, password });
-      console.log(response.data.token, response.data.refreshToken);
-      login(response.data.token, response.data.refreshToken);
-      login(response.data.token, response.data.refreshToken);
+      await apiClient.post("/user/register", { name,email, password });
+      const loginResponse = await apiClient.post("/user/login", {email, password});      
+      login(loginResponse.data.token, loginResponse.data.refreshToken, true);
+      handleNavigation(url(routes.userProfile, {userId:(loginResponse.data.user.id)}));
 
     } catch (err) {
       setError("Ошибка при регистрации. Попробуйте снова.");

@@ -1,5 +1,7 @@
 package project.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +21,7 @@ public class ProviderService {
 
     @ManyToOne
     @JoinColumn(name = "provider_id", nullable = false)
+    @JsonBackReference
     private Provider provider;
 
     @ManyToOne

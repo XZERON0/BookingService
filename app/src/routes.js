@@ -3,6 +3,7 @@ const routes = {
     index: "/index",
     userProfile:`/profile/:userId`,
     login: "/login",
+    order: "/order",
     register: "/register",
     about: "/about",
     // Добавьте сюда остальные маршруты
@@ -19,5 +20,12 @@ export const url = (path, params) => {
     path
   );
 };
+
+export const handleNavigation = (route)=>
+  {
+    window.location = route;
+    console.log(window.location);
+    
+  };
   export default routes;
   

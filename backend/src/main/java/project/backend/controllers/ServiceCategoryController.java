@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import project.backend.models.ServiceCategory;
 import project.backend.repository.ServiceCategoryRepository;
+import project.backend.repository.SubServiceCategoryRepository;
 
 @RestController
 @RequestMapping("/service")
 public class ServiceCategoryController {
     @Autowired
     private ServiceCategoryRepository rep;
+    @Autowired
+    private SubServiceCategoryRepository subServiceCategoryRepository;
 
     @Transactional    
     @GetMapping("/{id}")
@@ -29,14 +32,30 @@ public class ServiceCategoryController {
         return ResponseEntity.ok(serviceCategory);
     }
 
-    @Transactional    
+    // @Transactional    
+    // @GetMapping
+    // public ResponseEntity<List<ServiceCategory>> getAllServiceCategory()
+    // {
+    //     List<ServiceCategory> categories = rep.findAll();
+    //     return ResponseEntity.ok(categories);
+    // }
     @GetMapping
-    public ResponseEntity<List<ServiceCategory>> getAllServiceCategory()
-    {
-        List<ServiceCategory> categories = rep.findAll();
-        return ResponseEntity.ok(categories);
-    }
-    @Transactional
+@Transactional
+public ResponseEntity<List<ServiceCategory>> getAllServiceCategory() {
+    List<ServiceCategory> categories = rep.findAll();
+    return ResponseEntity.ok(categories);
+}
+// @GetMapping("/with-subcategories")
+// @Transactional
+// public ResponseEntity<List<ServiceCategory>> getAllServiceCategoriesWithSubcategories() {
+//     List<ServiceCategory> categories = rep.findAll();
+//     categories.forEach(category -> category.setSubServiceCategories(
+//         subServiceCategoryRepository.findByCategoryId(category.getId())
+//     ));
+//     return ResponseEntity.ok(categories);
+// }
+
+
     @PostMapping
     public ResponseEntity<String> postCategory(@RequestBody ServiceCategory serviceCategory)
     {

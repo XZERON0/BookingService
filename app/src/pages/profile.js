@@ -1,61 +1,44 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
-import { useNavigate, useParams } from "react-router-dom";
 import apiClient from "../api/ApiClient";
-import routes from "../routes";
 
-const CurrentUser = () => {
-  const { user, logout} = useAuthContext();
+const Profile = () => {
+  const { user } = useAuthContext();
   const { userId } = useParams();
   const [fetchedUser, setFetchedUser] = useState(null);
-  const [myProfile, setMyProfile] = useState(false);
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (user && user.id==userId) {
-      document.title = "Ваш профиль";
-      setMyProfile(true);
-    }
-    
-    else {
-      apiClient.get(`/user/${userId}`)
-        .then(response => {
-          setFetchedUser(response.data);
-          document.title = `${response.data.name} - Профиль`;
-        })
-        .catch(error => {
-          console.error(error);
-          document.title = "Ошибка загрузки профиля";
-        });
-      }
 
-    return () => {
-      document.title = "Мой сайт";
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await apiClient.get(`/user/${userId}`);
+        setFetchedUser(response.data);
+        document.title = `${response.data.name} - Профиль`;
+      } catch (error) {
+        console.error("Ошибка загрузки профиля:", error);
+        document.title = "Ошибка загрузки профиля";
+      }
     };
+
+    if (user && user.id === parseInt(userId, 10)) {
+      setFetchedUser(user);
+      document.title = "Ваш профиль";
+    } else {
+      fetchProfile();
+    }
   }, [user, userId]);
 
-  const handleLogout = () => {
-    logout();
-    navigate(routes.home);
-  };
-  
-
-  // Проверяем, если данные о пользователе еще не загружены
-  const currentUser = myProfile? user : fetchedUser;
-
-  if (!currentUser) {
+  if (!fetchedUser) {
     return <p>Загрузка профиля...</p>;
   }
 
   return (
     <div>
       <h1>Пользователь</h1>
-      <p>Имя: {currentUser.name}</p>
-      <p>Email: {currentUser.email}</p>
-      {myProfile && currentUser.id == userId && (
-        <button onClick={handleLogout}>Выйти</button>
-      )}
+      <p>Имя: {fetchedUser.name}</p>
+      <p>Email: {fetchedUser.email}</p>
     </div>
   );
 };
 
-export default CurrentUser;
+export default Profile;

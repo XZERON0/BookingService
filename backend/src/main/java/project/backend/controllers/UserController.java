@@ -1,14 +1,20 @@
 package project.backend.controllers;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import project.backend.models.User;
 import project.backend.repository.UserReposity;
@@ -46,6 +53,30 @@ public class UserController {
     private JwtService jwtService;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Value("${upload.path}")
+    private String uploadPath;
+
+    @PostMapping("/uploadAvatar")
+    public ResponseEntity<String> uploadAvatar(@RequestParam("file") MultipartFile file, @RequestParam("userId") long userId) {
+        if (file.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is empty");
+        }
+        try {
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(uploadPath + file.getOriginalFilename());
+            Files.write(path, bytes);
+
+            // Обновляем путь к аватарке в базе данных
+            User user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                user.setAvatar(path.toString());
+                userRepository.save(user);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body("File uploaded successfully: " + path.toString());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file");
+        }
+    }
    @GetMapping("/current")
 public ResponseEntity<?> getProfile() {
     return userService.getCurrentUser()
@@ -64,18 +95,8 @@ public ResponseEntity<?> registerUser(@RequestBody User user) {
     if (user.getEmail() == null || user.getEmail().isEmpty()) {
         return ResponseEntity.badRequest().body("Email не может быть пустым");
     }
-    String token = jwtService.generateAccessToken(user.getEmail());
-    String refreshToken = jwtService.generateRefreshToken(user.getEmail());
     userService.registerUser(user);
-    Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    Map<String, Object> response = new HashMap<>();
-    response.put("token", token);
-    response.put("user", user);
-    response.put("refreshToken", refreshToken);
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(user);
 }
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User loginRequest) {
@@ -114,16 +135,19 @@ public ResponseEntity<?> registerUser(@RequestBody User user) {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping
     public Page<User> getAllUsers
     (@RequestParam(defaultValue="0") int page,  
     @RequestParam(defaultValue = "5") int size,
     @RequestParam(defaultValue = "id") String sortBy,
-    @RequestParam(defaultValue = "true") boolean ascending )
-    {
+    @RequestParam(defaultValue = "true") boolean ascending, 
+    @RequestParam(defaultValue="") String filterBy,
+    @RequestParam(defaultValue="") String search)
+    { 
         Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return userService.getAllUser(pageable);
+        return userService.getAllUser(pageable,search);
     }
 
     @PutMapping("/{id}")

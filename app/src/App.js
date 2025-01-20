@@ -1,36 +1,14 @@
-import React, { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Main from "./pages/Main";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import { AuthProvider } from "./context/AuthContext"; // Импортируем AuthProvider
-import Register from "./components/Auth/Register";
-import Login from "./components/Auth/Login";
-import CurrentUser from "./pages/profile";
-import routes from "./routes";
+import React from "react";
+import { AuthProvider, useAuthContext } from "./context/AuthContext"; 
+import BaseLayout from "./pages/BaseLayout";
 
 const App = () => {
   return (
-    <AuthProvider> 
-      <Router>
-        <nav>
-          <ul>
-            <li><Link to={routes.home}>Главная</Link></li>
-            <li><Link to={routes.index}>Индекс</Link></li>
-            <li><Link to={routes.login}>Вход</Link></li>
-            <li><Link to={routes.register}>Регистрация</Link></li>
-            <li><Link to={routes.userProfile}>Профиль</Link></li>
-          </ul>
-        </nav>
-        <Routes>
-          <Route path={routes.home} element={<Main />} />
-          <Route path={routes.index} element={<Index />} />
-          <Route path={routes.login} element={<Login />} />
-          <Route path={routes.register} element={<Register />} />
-          <Route path={routes.userProfile} element={<CurrentUser />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
+    <AuthProvider>
+      {/* Здесь просто показываем компоненты без роутинга */}
+      <BaseLayout />
+      {/* Все страницы отображаются внутри BaseLayout, например */}
+      {/* Нужно будет добавить логику отображения отдельных страниц */}
     </AuthProvider>
   );
 };
