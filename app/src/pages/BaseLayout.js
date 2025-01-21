@@ -9,14 +9,19 @@ import Register from "../components/Auth/Register";
 import NotFound from "./NotFound";
 import useAuth from "../hooks/useAuth";
 import '../css/style.css';
-
-const BaseLayout = () => {
-  const {logout} = useAuth();
+import Order from "./Order";
+import Settings from "./Settings";
+import routes from "../routes";
+// import 'bootstrap/dist/css/bootstrap.min.css';
+function BaseLayout() {
+  const { logout } = useAuth();
   let user = useAuthContext().user;
-  if (!user || user == null) {
+  let isAuthenticated = useAuthContext().isAuthenticated;
+  if ((!user || user == null) && isAuthenticated) {
     user = localStorage.getItem('user');
   }
   return (
+    
     <Router>
       <nav className="nav-bar">
         <ul className="nav-list">
@@ -29,7 +34,7 @@ const BaseLayout = () => {
                 logout();
                 localStorage.removeItem('user');
                 window.location.reload();
-              }} className="nav-button">Выход</button></li>
+              } } className="nav-button">Выход</button></li>
             </>
           ) : (
             <>
@@ -41,15 +46,17 @@ const BaseLayout = () => {
       </nav>
 
       <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/index" element={<Index />} />
-        <Route path="/profile/:userId" element={<Profile />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path={routes.home} element={<Main />} />
+        <Route path={routes.index} element={<Index />} />
+        <Route path={routes.userProfile} element={<Profile />} />
+        <Route path={routes.login} element={<Login />} />
+        <Route path={routes.register} element={<Register />} />
+        <Route path={routes.order} element={<Order />} />
+        <Route path={routes.settings} element={<Settings />} />
+        <Route path={routes.notFound} element={<NotFound />} />
       </Routes>
     </Router>
   );
-};
+}
 
 export default BaseLayout;

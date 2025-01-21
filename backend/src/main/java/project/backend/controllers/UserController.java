@@ -62,14 +62,21 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is empty");
         }
         try {
+            // Check if the directory exists, if not, create it
+            Path uploadDir = Paths.get(uploadPath);
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+    
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(uploadPath + file.getOriginalFilename());
+            Path path = uploadDir.resolve(file.getOriginalFilename());
             Files.write(path, bytes);
-
+    
             // Обновляем путь к аватарке в базе данных
             User user = userRepository.findById(userId).orElse(null);
             if (user != null) {
-                user.setAvatar(path.toString());
+                String avatarUrl = "/uploads/" + file.getOriginalFilename();
+                user.setAvatar(avatarUrl);
                 userRepository.save(user);
             }
             return ResponseEntity.status(HttpStatus.OK).body("File uploaded successfully: " + path.toString());
@@ -77,8 +84,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file");
         }
     }
-   @GetMapping("/current")
-public ResponseEntity<?> getProfile() {
+    
+
+    @GetMapping("/current")
+    public ResponseEntity<?> getProfile() {
     return userService.getCurrentUser()
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.status(403).build());

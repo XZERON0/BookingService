@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import apiClient from "../api/ApiClient";
 import { useNavigate } from "react-router-dom";
-import {routes } from "../routes";
+import routes  from "../routes";
 
 const Index = () => {
   const [data, setData] = useState([]);
@@ -27,7 +27,7 @@ const Index = () => {
 const filteredData = data.filter(item => {
   const name = item.user.name.toLowerCase();
   const email = item.user.email.toLowerCase();
-  const providerService = item.providerServices.map(item=>item.subServiceCategory.category.type);
+  const providerService = item.providerServices.map(item=>item.subServiceCategory.title);
   const search = searchValue.toLowerCase();
   return name.includes(search) || email.includes(search) || providerService.join(' ').toLowerCase().includes(search);
 });
@@ -55,16 +55,20 @@ const filteredData = data.filter(item => {
      {Array.isArray(filteredData) && filteredData.length > 0 ? (
   filteredData.map(item => (
     <div key={item.id}>
-      <p>Имя: {item.user.name}</p>
-      <p>Email: {item.user.email}</p>
+      <p>{item.user.name}</p>
+      <p>{item.user.email}</p>
       {Array.isArray(item.providerServices) && item.providerServices.length > 0 ? (
         <div>
           <p>Предоставляемые услуги:</p>
           <ul>
             {item.providerServices.map(el => (
-              <li key={el.id}>{el.title}</li>
+              <li key={el.subServiceCategory.category.id}>{el.subServiceCategory.title}</li> 
             ))}
           </ul>
+          <button onClick={()=>{localStorage.setItem('order', item.id); navigate(routes.order);
+          }}>
+            Заказать услугу
+          </button>
         </div>
       ) : (
         <p>Нет предоставляемых услуг</p>

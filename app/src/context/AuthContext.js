@@ -61,6 +61,7 @@ export const AuthProvider = ({ children }) => {
          localStorage.setItem('user', response.data.id);
         })
         .catch(() => {
+          localStorage.removeItem('user');
         setIsAuthenticated(false);
       });
   };

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,12 +25,22 @@ public class ProviderController {
     @Autowired
     private ProviderRepository rep;
     
-    @GetMapping
-    public ResponseEntity<List<Provider>> allProvider()
-    {
+     @GetMapping
+    public ResponseEntity<?> allProvider(@RequestParam(required = false) Long userId) {
+        if (userId != null) {
+            Optional<Provider> provider = rep.findByUserId(userId);
+            if (provider.isPresent()) {
+                return ResponseEntity.ok(List.of(provider.get()));
+            } 
+        }
         List<Provider> items = rep.findAll();
+        if (items.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Нету данных");
+            }
+
         return ResponseEntity.ok(items);
     }
+
     @GetMapping("/check")
     public ResponseEntity<?> checkUserIsProvider(@RequestParam long id)
     {

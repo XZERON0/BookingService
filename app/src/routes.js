@@ -6,6 +6,10 @@ const routes = {
     order: "/order",
     register: "/register",
     about: "/about",
+    contact: "/contact",
+    settings: "/settings",
+    notFound : "*",
+
     // Добавьте сюда остальные маршруты
   };
   /**
@@ -21,11 +25,5 @@ export const url = (path, params) => {
   );
 };
 
-export const handleNavigation = (route)=>
-  {
-    window.location = route;
-    console.log(window.location);
-    
-  };
-  export default routes;
+export default routes;
   

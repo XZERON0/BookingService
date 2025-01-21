@@ -1,0 +1,47 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-form {
+  margin-bottom: 20px;
+}
+
+.change-avatar-btn {
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.change-avatar-btn:hover {
+  background-color: #3e8e41;
+}
+
+.circle-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+
+.user-info {
+  text-align: center;
+}
+
+.user-info h1 {
+  margin-bottom: 10px;
+}
+
+.user-info p {
+  margin-bottom: 10px;
+  font-size: 16px;
+}

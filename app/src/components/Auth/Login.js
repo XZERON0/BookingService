@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import apiClient from "../../api/ApiClient";
-import routes, { handleNavigation, url } from "../../routes";
+import routes, {url } from "../../routes";
 import { useAuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -10,14 +11,14 @@ const Login = () => {
     const [error, setError] = useState("");
     const { login, isAuthenticated} = useAuth();
     const {user} = useAuthContext();
-    
+    const navigate = useNavigate();
     document.title = "Логин";
     useEffect(()=>
         {
           
         if(isAuthenticated && user)
         {
-            handleNavigation(url(routes.userProfile, { userId: user.id }));
+            navigate(url(routes.userProfile, { userId: user.id }));
         }
         }, [isAuthenticated, user]);
         const handleSubmit = async (e) => {
@@ -27,7 +28,7 @@ const Login = () => {
             login(response.data.token, response.data.refreshToken, true);
             console.log(isAuthenticated);
             
-              handleNavigation(url(routes.userProfile, { userId: response.data.user.id }));
+              navigate(url(routes.userProfile, { userId: response.data.user.id }));
           } catch (err) {
             setError("Ошибка при входе");
             console.error(err);

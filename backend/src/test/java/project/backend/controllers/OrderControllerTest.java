@@ -44,7 +44,7 @@ public void testGetOrderWithRelations() throws Exception {
     User customer = new User();
     customer.setId(1L);
     customer.setName("John Doe");
-    Provider provider = new Provider(1, null, customer, null);
+    Provider provider = new Provider();
     provider.setId(1L);
 
     Order order = new Order();
